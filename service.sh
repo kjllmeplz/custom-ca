@@ -1,0 +1,1 @@
+mount --bind "${0%/*}/cacerts/" /system/etc/security/cacerts/

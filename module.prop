@@ -1,0 +1,6 @@
+id=custom-ca
+name=Custom CA
+version=1.0
+versionCode=1
+author=Ranko
+description=Add Custom CA to system
