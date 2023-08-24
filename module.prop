@@ -1,6 +1,6 @@
 id=custom-ca
 name=Custom CA
-version=1.0
-versionCode=1
+version=VER
+versionCode=VERCODE
 author=Ranko
 description=Add Custom CA to system
