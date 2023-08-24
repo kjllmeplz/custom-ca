@@ -1,0 +1,45 @@
+name: Build ZIP file
+on:
+  workflow_call: 
+  workflow_dispatch:
+
+jobs:
+  build_zip:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Get module version
+        id: version
+        uses: notiz-dev/github-action-json-property@release
+        with: 
+          path: 'module.json'
+          prop_path: 'version'
+
+      - name: Set version in module.prop
+        run: |
+          sed -i -e "s/\bVER\b/${{steps.version.outputs.prop}}/g" $GITHUB_WORKSPACE/module.prop
+          VERCODE=$(grep -Eo '[0-9][0-9][0-9]' $GITHUB_WORKSPACE/module.json)
+          sed -i -e "s/\bVERCODE\b/$VERCODE/g" $GITHUB_WORKSPACE/module.prop
+      
+      - name: Create ZIP archive
+        run: |
+          zip -r ${{ github.event.repository.name }}.zip ./* -x module.json
+
+      - name: Upload modules to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{steps.version.outputs.prop}}
+          release_name: ${{steps.version.outputs.prop}}
+          file: ${{ github.event.repository.name }}.zip
+          file_glob: true
+          overwrite: true
+
+      - name: Cleanup module zip
+        run:  |
+          rm ${{ github.event.repository.name }}.zip
+
+      
+    
